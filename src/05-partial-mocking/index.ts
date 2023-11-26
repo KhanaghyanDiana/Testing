@@ -10,6 +10,6 @@ export const mockThree = () => {
   console.log('baz');
 };
 
-export const unmockedFunction = () => {
+export const unMockedFunction = () => {
   console.log('I am not mocked');
 };
