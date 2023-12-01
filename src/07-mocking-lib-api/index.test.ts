@@ -1,5 +1,5 @@
 import { throttledGetDataFromApi } from './index';
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 describe('throttledGetDataFromApi', () => {
   jest.mock('axios');
@@ -129,10 +129,33 @@ describe('throttledGetDataFromApi', () => {
   });
 
   test('should perform request to correct provided url', async () => {
+    const mockAxiosInstance = { get: jest.fn() } as unknown as AxiosInstance;
+    axios.create = jest.fn(() => mockAxiosInstance);
 
+    const mockResponse = { data: 'mocked data' };
+    (mockAxiosInstance.get as jest.Mock).mockImplementationOnce(() =>
+      Promise.resolve(mockResponse),
+    );
+
+    await throttledGetDataFromApi('/');
+
+    throttledGetDataFromApi.flush();
+
+    expect(mockAxiosInstance.get).toHaveBeenCalledWith('/');
   });
 
   test('should return response data', async () => {
+    const mockAxiosInstance = { get: jest.fn() } as unknown as AxiosInstance;
+    axios.create = jest.fn(() => mockAxiosInstance);
 
+    const mockResponseData = 'mocked data';
+    const mockResponse = { data: mockResponseData };
+    (mockAxiosInstance.get as jest.Mock).mockImplementationOnce(() =>
+      Promise.resolve(mockResponse),
+    );
+
+    const result = await throttledGetDataFromApi('/');
+
+    expect(result).toEqual(mockResponseData);
   });
 });
